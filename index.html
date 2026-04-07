@@ -5,95 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); padding: 20px; }
-        .field { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        select, input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); padding: 15px; }
+        .field { margin-bottom: 12px; }
+        .row { display: flex; gap: 10px; margin-bottom: 12px; }
+        .row .field { flex: 1; margin-bottom: 0; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        select, input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: white; color: black; }
+        /* Estilo para cuando falta un campo */
+        .error { border: 2px solid #ff4d4d !important; }
+        button { width: 100%; padding: 15px; background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <h3>Registro de Safety Observation</h3>
+    <h3>Safety Observation Card</h3>
 
-    <div class="field">
-        <label>Date:</label>
-        <input type="date" id="date">
+    <div class="row">
+        <div class="field">
+            <label>Date:</label>
+            <input type="date" id="date">
+        </div>
+        <div class="field">
+            <label>Badge Number:</label>
+            <input type="text" id="badge" placeholder="Ej: ABC12345">
+        </div>
     </div>
 
     <div class="field">
         <label>Area:</label>
         <select id="area">
+            <option value="">Select Area...</option>
             <option value="1GXX">AREA G - 1GXX - UTILITY AREA</option>
             <option value="SUB1B01">SUBSTATION 1B01</option>
             <option value="SUB1C01">SUBSTATION 1C01</option>
             <option value="1A01">UNIT 01 - VDU - 1A01 - Vacuum distillation unit</option>
             <option value="1C02">UNIT 02 - DHTU - 1C02 - Distillate Hydrotreater</option>
             <option value="ZONE1">ZONE 1</option>
-
-
         </select>
     </div>
 
-    <div class="field">
-        <label>Badge Number:</label>
-        <input type="text" id="badge" placeholder="Ej: ABC12345">
+    <div class="row">
+        <div class="field">
+            <label>Company:</label>
+            <select id="company">
+                <option value="">Select Company...</option>
+                <option value="TEN">TECHNIP ENERGIES</option>
+                <option value="PTJ">PETROJET</option>
+                <option value="ENPPI">ENPPI</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Functional Area:</label>
+            <select id="funcArea">
+                <option value="">Select...</option>
+                <option value="Administrative">Administrative</option>
+                <option value="Construction">Construction</option>
+                <option value="HSE">HSE</option>
+                <option value="PCC">PCC</option>
+                <option value="SUBCONTRACTOR">SUBCONTRACTOR</option>
+            </select>
+        </div>
     </div>
 
     <div class="field">
-        <label>Company:</label>
-        <select id="company">
-            <option value="TEN">TECHNIP ENERGIES</option>
-            <option value="PTJ">PETROJET</option>
-            <option value="ENPPI">ENPPI</option>
-        </select>
-    </div>
-
-    <div class="field">
-        <label>Funtional Area:</label>
-        <select id="funcArea">
-            <option value="Administrative">Administrative</option>
-            <option value="Construction">Construction</option>
-            <option value="HSE">HSE</option>
-	    <option value="PCC">PCC</option>
-	    <option value="SUBCONTRACTOR">SUBCONTRACTOR</option>
-        </select>
-    </div>
-
-    <div class="field">
-        <label>Type of Obseravation:</label>
+        <label>Type of Observation:</label>
         <select id="obsType">
+            <option value="">Select Type...</option>
             <option value="Safe">Safe</option>
             <option value="Unsafe Condition">Unsafe Condition</option>
             <option value="Unsafe Act">Unsafe Act</option>
-            <option value="Unsafe Act">Near Miss</option>
+            <option value="Near Miss">Near Miss</option>
         </select>
     </div>
 
     <div class="field">
         <label>Observation:</label>
-        <textarea id="observation" rows="3"></textarea>
+        <textarea id="observation" rows="3" placeholder="Describe what you observed..."></textarea>
     </div>
 
     <button id="mainButton" onclick="sendData()">Save Observation</button>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Abre la app a pantalla completa
+        tg.expand();
 
         function sendData() {
-            // Recolección de datos
-            const data = [
-                document.getElementById('date').value,
-                document.getElementById('area').value,
-                document.getElementById('badge').value,
-                document.getElementById('company').value,
-                document.getElementById('funcArea').value,
-                document.getElementById('obsType').value,
-                document.getElementById('observation').value
-            ].join(","); // Unimos todo separado por comas
+            // Lista de IDs de los campos a validar
+            const fields = ['date', 'badge', 'area', 'company', 'funcArea', 'obsType', 'observation'];
+            let isValid = true;
+            let values = [];
 
-            // Enviamos la cadena al bot y cerramos la app
-            tg.sendData(data);
+            // Validar que todos tengan contenido
+            fields.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element.value.trim()) {
+                    element.classList.add('error');
+                    isValid = false;
+                } else {
+                    element.classList.remove('error');
+                    values.push(element.value);
+                }
+            });
+
+            if (!isValid) {
+                tg.showAlert("Please fill in all required fields.");
+                return;
+            }
+
+            // Si es válido, enviamos la cadena CSV
+            const dataString = values.join(",");
+            tg.sendData(dataString);
         }
     </script>
 </body>
