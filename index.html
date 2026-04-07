@@ -11,7 +11,6 @@
         .row .field { flex: 1; margin-bottom: 0; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
         select, input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: white; color: black; }
-        /* Estilo para cuando falta un campo */
         .error { border: 2px solid #ff4d4d !important; }
         button { width: 100%; padding: 15px; background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
@@ -26,21 +25,21 @@
         </div>
         <div class="field">
             <label>Badge Number:</label>
-            <input type="text" id="badge" placeholder="Ej: ABC12345">
+            <input type="text" id="badge" placeholder="Numbers only" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
     </div>
 
     <div class="field">
-        <label>Area:</label>
-        <select id="area">
-            <option value="">Select Area...</option>
-            <option value="1GXX">AREA G - 1GXX - UTILITY AREA</option>
-            <option value="SUB1B01">SUBSTATION 1B01</option>
-            <option value="SUB1C01">SUBSTATION 1C01</option>
-            <option value="1A01">UNIT 01 - VDU - 1A01 - Vacuum distillation unit</option>
-            <option value="1C02">UNIT 02 - DHTU - 1C02 - Distillate Hydrotreater</option>
-            <option value="ZONE1">ZONE 1</option>
-        </select>
+        <label>Area (Searchable):</label>
+        <input list="areaOptions" id="area" placeholder="Type to search area...">
+        <datalist id="areaOptions">
+            <option value="1GXX - AREA G - UTILITY AREA">
+            <option value="SUB1B01 - SUBSTATION 1B01">
+            <option value="SUB1C01 - SUBSTATION 1C01">
+            <option value="1A01 - UNIT 01 - VDU - Vacuum distillation unit">
+            <option value="1C02 - UNIT 02 - DHTU - Distillate Hydrotreater">
+            <option value="ZONE1 - ZONE 1">
+        </datalist>
     </div>
 
     <div class="row">
@@ -88,32 +87,43 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // Bloquear fechas futuras en el calendario nativo
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').setAttribute('max', today);
+
         function sendData() {
-            // Lista de IDs de los campos a validar
             const fields = ['date', 'badge', 'area', 'company', 'funcArea', 'obsType', 'observation'];
             let isValid = true;
             let values = [];
 
-            // Validar que todos tengan contenido
             fields.forEach(id => {
                 const element = document.getElementById(id);
-                if (!element.value.trim()) {
+                const val = element.value.trim();
+                
+                // Validación básica de vacío
+                if (!val) {
                     element.classList.add('error');
                     isValid = false;
                 } else {
                     element.classList.remove('error');
-                    values.push(element.value);
                 }
+
+                // Validación específica de fecha (no futura)
+                if (id === 'date' && val > today) {
+                    element.classList.add('error');
+                    isValid = false;
+                    tg.showAlert("Date cannot be in the future.");
+                }
+
+                if (isValid) values.push(val);
             });
 
             if (!isValid) {
-                tg.showAlert("Please fill in all required fields.");
+                if (!values.length < fields.length) tg.showAlert("Please fill in all required fields correctly.");
                 return;
             }
 
-            // Si es válido, enviamos la cadena CSV
-            const dataString = values.join(",");
-            tg.sendData(dataString);
+            tg.sendData(values.join(","));
         }
     </script>
 </body>
