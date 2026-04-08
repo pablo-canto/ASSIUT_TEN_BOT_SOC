@@ -30,15 +30,63 @@
     </div>
 
     <div class="field">
+        <label>Name:</label>
+        <input type="text" id="name" placeholder="Full Name" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
+    </div>
+
+    <div class="field">
         <label>Area (Searchable):</label>
         <input list="areaOptions" id="area" placeholder="Type to search area...">
         <datalist id="areaOptions">
+            <option value="ADMIN BUILDING">
             <option value="1GXX - AREA G - UTILITY AREA">
-            <option value="SUB1B01 - SUBSTATION 1B01">
-            <option value="SUB1C01 - SUBSTATION 1C01">
-            <option value="1A01 - UNIT 01 - VDU - Vacuum distillation unit">
-            <option value="1C02 - UNIT 02 - DHTU - Distillate Hydrotreater">
-            <option value="ZONE1 - ZONE 1">
+            <option value="ENPPI LAYDOWN 1">
+            <option value="ENPPI LAYDOWN A3 - WAREHOUSE">
+            <option value="GATE 01">
+            <option value="GATE 02">
+            <option value="GATE 06">
+            <option value="GATE 07">
+            <option value="GATE 13">
+            <option value="GATE 15">
+            <option value="SUBSTATION 1B01">
+            <option value="SUBSTATION 1C01">
+            <option value="SUBSTATION 1D01">
+            <option value="SUBSTATION 1E01">
+            <option value="SUBSTATION 1G01">
+            <option value="SUBSTATION 1Q01">
+            <option value="TECHNIP ACCOMMODATION">
+            <option value="TEN LAYDOWN 1">
+            <option value="TEN LAYDOWN 2">
+            <option value="TEN LAYDOWN 3">
+            <option value="TEN LAYDOWN 4">
+            <option value="TEN WAREHOUSE">
+            <option value="TOP OFFICE">
+            <option value="UNIT 01 - VDU - Vacuum distillation unit">
+            <option value="UNIT 02 - DHTU - Distillate Hydrotreater">
+            <option value="UNIT 03 - HCKU - 1B03 - Hydrocracker">
+            <option value="UNIT 04 - HPU - 1B04 - Hydrogen production unit">
+            <option value="UNIT 05 - DCU - 1D05 - Delayed Coker Unit">
+            <option value="UNIT 09 - ARU - E09 - Amine regeneration Unit">
+            <option value="UNIT 10 - SWSU - E10 - Sour water Stripper Unit">
+            <option value="UNIT 11 - SRU&TGTU - 1L11 - Sulphur Recovery Unit & Tail Gas Treatment Unit">
+            <option value="UNIT 33 - CWU - 1Q33 - Cooling Water Unit">
+            <option value="UNIT 43 - CAU - 1G43 - Caustic Storage & Distribution Unit">
+            <option value="UNIT 50 - FLAU - 1M50 - Flare Unit">
+            <option value="UNIT 52 - Waste Water">
+            <option value="UNIT 54 - SSU - 1L54 - Sulphur Solidifcation Unit">
+            <option value="UNIT 58 - RIU - 1M58 - Refinery Interconnecting Utility">
+            <option value="UNIT 59 - RIP - 1M59 - Refinery Interconnecting Process">
+            <option value="UNIT 63 - INU - 1M63 - Refinery North interconnecting">
+            <option value="1GXX - AREA G - UTILITY AREA">
+            <option value="1GXX - AREA G - UTILITY AREA">
+            <option value="1GXX - AREA G - UTILITY AREA">
+            <option value="1GXX - AREA G - UTILITY AREA">
+            <option value="1GXX - AREA G - UTILITY AREA">
+            <option value="1GXX - AREA G - UTILITY AREA">        
+            <option value="ZONE 1">
+            <option value="ZONE 2">
+            <option value="ZONE 3">
+            <option value="ZONE 4">
         </datalist>
     </div>
 
@@ -87,7 +135,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Configuración de límites de fecha
         const dateInput = document.getElementById('date');
         const now = new Date();
         const today = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
@@ -103,6 +150,7 @@
             const fields = [
                 { id: 'date', label: 'Date' },
                 { id: 'badge', label: 'Badge Number' },
+                { id: 'name', label: 'Name' },
                 { id: 'area', label: 'Area' },
                 { id: 'company', label: 'Company' },
                 { id: 'funcArea', label: 'Functional Area' },
