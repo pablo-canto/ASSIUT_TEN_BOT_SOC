@@ -87,39 +87,58 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Bloquear fechas futuras en el calendario nativo
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').setAttribute('max', today);
+        // Configuración de límites de fecha
+        const dateInput = document.getElementById('date');
+        const now = new Date();
+        const today = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+        
+        const minDateObj = new Date();
+        minDateObj.setDate(minDateObj.getDate() - 15);
+        const minDate = new Date(minDateObj.getTime() - (minDateObj.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+
+        dateInput.setAttribute('max', today);
+        dateInput.setAttribute('min', minDate);
 
         function sendData() {
-            const fields = ['date', 'badge', 'area', 'company', 'funcArea', 'obsType', 'observation'];
-            let isValid = true;
+            const fields = [
+                { id: 'date', label: 'Date' },
+                { id: 'badge', label: 'Badge Number' },
+                { id: 'area', label: 'Area' },
+                { id: 'company', label: 'Company' },
+                { id: 'funcArea', label: 'Functional Area' },
+                { id: 'obsType', label: 'Type of Observation' },
+                { id: 'observation', label: 'Observation' }
+            ];
+
+            let errors = [];
             let values = [];
 
-            fields.forEach(id => {
-                const element = document.getElementById(id);
+            fields.forEach(field => {
+                const element = document.getElementById(field.id);
                 const val = element.value.trim();
-                
-                // Validación básica de vacío
+
                 if (!val) {
                     element.classList.add('error');
-                    isValid = false;
+                    errors.push(`- ${field.label} is required.`);
+                } else if (field.id === 'date') {
+                    if (val > today) {
+                        element.classList.add('error');
+                        errors.push("- Date cannot be in the future.");
+                    } else if (val < minDate) {
+                        element.classList.add('error');
+                        errors.push("- Date cannot be older than 15 days.");
+                    } else {
+                        element.classList.remove('error');
+                        values.push(val);
+                    }
                 } else {
                     element.classList.remove('error');
+                    values.push(val);
                 }
-
-                // Validación específica de fecha (no futura)
-                if (id === 'date' && val > today) {
-                    element.classList.add('error');
-                    isValid = false;
-                    tg.showAlert("Date cannot be in the future.");
-                }
-
-                if (isValid) values.push(val);
             });
 
-            if (!isValid) {
-                if (!values.length < fields.length) tg.showAlert("Please fill in all required fields correctly.");
+            if (errors.length > 0) {
+                tg.showAlert("Validation errors:\n" + errors.join("\n"));
                 return;
             }
 
