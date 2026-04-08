@@ -24,6 +24,29 @@
             <input type="date" id="date">
         </div>
         <div class="field">
+            <label>Company:</label>
+            <select id="company">
+                <option value="">Select Company...</option>
+                <option value="TEN">TECHNIP ENERGIES</option>
+                <option value="PTJ">PETROJET</option>
+                <option value="ENPPI">ENPPI</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Functional Area:</label>
+            <select id="funcArea">
+                <option value="">Select...</option>
+                <option value="Administrative">Administrative</option>
+                <option value="Construction">Construction</option>
+                <option value="HSE">HSE</option>
+                <option value="PCC">PCC</option>
+                <option value="SUBCONTRACTOR">SUBCONTRACTOR</option>
+            </select>
+        </div>
+        <div class="field">
             <label>Badge Number:</label>
             <input type="text" id="badge" placeholder="Numbers only" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
@@ -77,12 +100,6 @@
             <option value="UNIT 58 - RIU - 1M58 - Refinery Interconnecting Utility">
             <option value="UNIT 59 - RIP - 1M59 - Refinery Interconnecting Process">
             <option value="UNIT 63 - INU - 1M63 - Refinery North interconnecting">
-            <option value="1GXX - AREA G - UTILITY AREA">
-            <option value="1GXX - AREA G - UTILITY AREA">
-            <option value="1GXX - AREA G - UTILITY AREA">
-            <option value="1GXX - AREA G - UTILITY AREA">
-            <option value="1GXX - AREA G - UTILITY AREA">
-            <option value="1GXX - AREA G - UTILITY AREA">        
             <option value="ZONE 1">
             <option value="ZONE 2">
             <option value="ZONE 3">
@@ -90,38 +107,44 @@
         </datalist>
     </div>
 
-    <div class="row">
-        <div class="field">
-            <label>Company:</label>
-            <select id="company">
-                <option value="">Select Company...</option>
-                <option value="TEN">TECHNIP ENERGIES</option>
-                <option value="PTJ">PETROJET</option>
-                <option value="ENPPI">ENPPI</option>
-            </select>
-        </div>
-        <div class="field">
-            <label>Functional Area:</label>
-            <select id="funcArea">
-                <option value="">Select...</option>
-                <option value="Administrative">Administrative</option>
-                <option value="Construction">Construction</option>
-                <option value="HSE">HSE</option>
-                <option value="PCC">PCC</option>
-                <option value="SUBCONTRACTOR">SUBCONTRACTOR</option>
-            </select>
-        </div>
+    <div class="field">
+        <label>Observed Company:</label>
+        <select id="obsCompany">
+            <option value="">Select Observed Company...</option>
+            <option value="TEN">TECHNIP ENERGIES</option>
+            <option value="PTJ">PETROJET</option>
+            <option value="ENPPI">ENPPI</option>
+            <option value="OTHER">OTHER</option>
+        </select>
     </div>
 
-    <div class="field">
-        <label>Type of Observation:</label>
-        <select id="obsType">
-            <option value="">Select Type...</option>
-            <option value="Safe">Safe</option>
-            <option value="Unsafe Condition">Unsafe Condition</option>
-            <option value="Unsafe Act">Unsafe Act</option>
-            <option value="Near Miss">Near Miss</option>
-        </select>
+    <div class="row">
+        <div class="field">
+            <label>Type of Observation:</label>
+            <select id="obsType">
+                <option value="">Select Type...</option>
+                <option value="Safe">Safe</option>
+                <option value="Unsafe Condition">Unsafe Condition</option>
+                <option value="Unsafe Act">Unsafe Act</option>
+                <option value="Near Miss">Near Miss</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>HSE Category (Searchable):</label>
+            <input list="categoryOptions" id="hseCategory" placeholder="Search category...">
+            <datalist id="categoryOptions">
+                <option value="Housekeeping">
+                <option value="Working at Height">
+                <option value="PPE Violation">
+                <option value="Lifting Operations">
+                <option value="Electrical Safety">
+                <option value="Fire Protection">
+                <option value="Tools & Equipment">
+                <option value="Scaffolding">
+                <option value="Chemical Handling">
+                <option value="Traffic Management">
+            </datalist>
+        </div>
     </div>
 
     <div class="field">
@@ -149,12 +172,14 @@
         function sendData() {
             const fields = [
                 { id: 'date', label: 'Date' },
+                { id: 'company', label: 'Company' },
+                { id: 'funcArea', label: 'Functional Area' },
                 { id: 'badge', label: 'Badge Number' },
                 { id: 'name', label: 'Name' },
                 { id: 'area', label: 'Area' },
-                { id: 'company', label: 'Company' },
-                { id: 'funcArea', label: 'Functional Area' },
+                { id: 'obsCompany', label: 'Observed Company' },
                 { id: 'obsType', label: 'Type of Observation' },
+                { id: 'hseCategory', label: 'HSE Category' },
                 { id: 'observation', label: 'Observation' }
             ];
 
