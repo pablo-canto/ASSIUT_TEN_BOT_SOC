@@ -9,6 +9,9 @@
         .field { margin-bottom: 12px; }
         .row { display: flex; gap: 10px; margin-bottom: 12px; }
         .row .field { flex: 1; margin-bottom: 0; }
+        /* Ajuste de proporciones para Badge vs Name */
+        .flex-small { flex: 0.5 !important; }
+        .flex-large { flex: 1.5 !important; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
         select, input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: white; color: black; }
         .error { border: 2px solid #ff4d4d !important; }
@@ -35,26 +38,14 @@
     </div>
 
     <div class="row">
-        <div class="field">
-            <label>Functional Area:</label>
-            <select id="funcArea">
-                <option value="">Select...</option>
-                <option value="Administrative">Administrative</option>
-                <option value="Construction">Construction</option>
-                <option value="HSE">HSE</option>
-                <option value="PCC">PCC</option>
-                <option value="SUBCONTRACTOR">SUBCONTRACTOR</option>
-            </select>
-        </div>
-        <div class="field">
+        <div class="field flex-small">
             <label>Badge Number:</label>
-            <input type="text" id="badge" placeholder="Numbers only" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            <input type="text" id="badge" placeholder="ID" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
-    </div>
-
-    <div class="field">
-        <label>Name:</label>
-        <input type="text" id="name" placeholder="Full Name" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
+        <div class="field flex-large">
+            <label>Name:</label>
+            <input type="text" id="name" placeholder="Full Name" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
+        </div>
     </div>
 
     <div class="field">
@@ -84,22 +75,22 @@
             <option value="TEN LAYDOWN 4">
             <option value="TEN WAREHOUSE">
             <option value="TOP OFFICE">
-            <option value="UNIT 01 - VDU - Vacuum distillation unit">
-            <option value="UNIT 02 - DHTU - Distillate Hydrotreater">
-            <option value="UNIT 03 - HCKU - 1B03 - Hydrocracker">
-            <option value="UNIT 04 - HPU - 1B04 - Hydrogen production unit">
-            <option value="UNIT 05 - DCU - 1D05 - Delayed Coker Unit">
-            <option value="UNIT 09 - ARU - E09 - Amine regeneration Unit">
-            <option value="UNIT 10 - SWSU - E10 - Sour water Stripper Unit">
-            <option value="UNIT 11 - SRU&TGTU - 1L11 - Sulphur Recovery Unit & Tail Gas Treatment Unit">
-            <option value="UNIT 33 - CWU - 1Q33 - Cooling Water Unit">
-            <option value="UNIT 43 - CAU - 1G43 - Caustic Storage & Distribution Unit">
-            <option value="UNIT 50 - FLAU - 1M50 - Flare Unit">
+            <option value="UNIT 01 - VDU">
+            <option value="UNIT 02 - DHTU">
+            <option value="UNIT 03 - HCKU">
+            <option value="UNIT 04 - HPU">
+            <option value="UNIT 05 - DCU">
+            <option value="UNIT 09 - ARU">
+            <option value="UNIT 10 - SWSU">
+            <option value="UNIT 11 - SRU&TGTU">
+            <option value="UNIT 33 - CWU">
+            <option value="UNIT 43 - CAU">
+            <option value="UNIT 50 - FLAU">
             <option value="UNIT 52 - Waste Water">
-            <option value="UNIT 54 - SSU - 1L54 - Sulphur Solidifcation Unit">
-            <option value="UNIT 58 - RIU - 1M58 - Refinery Interconnecting Utility">
-            <option value="UNIT 59 - RIP - 1M59 - Refinery Interconnecting Process">
-            <option value="UNIT 63 - INU - 1M63 - Refinery North interconnecting">
+            <option value="UNIT 54 - SSU">
+            <option value="UNIT 58 - RIU">
+            <option value="UNIT 59 - RIP">
+            <option value="UNIT 63 - INU">
             <option value="ZONE 1">
             <option value="ZONE 2">
             <option value="ZONE 3">
@@ -133,16 +124,43 @@
             <label>HSE Category (Searchable):</label>
             <input list="categoryOptions" id="hseCategory" placeholder="Search category...">
             <datalist id="categoryOptions">
-                <option value="Housekeeping">
-                <option value="Working at Height">
-                <option value="PPE Violation">
-                <option value="Lifting Operations">
-                <option value="Electrical Safety">
-                <option value="Fire Protection">
-                <option value="Tools & Equipment">
-                <option value="Scaffolding">
-                <option value="Chemical Handling">
-                <option value="Traffic Management">
+                <option value="Access">
+                <option value="Barricades">
+                <option value="Cable Management">
+                <option value="Chemical MSDS">
+                <option value="Competency / Training">
+                <option value="Confined Space">
+                <option value="Drinking Water">
+                <option value="Dropped Objects">
+                <option value="Dust control">
+                <option value="Electricity">
+		        <option value="Emergency">
+		        <option value="Environmental Issue">	
+        		<option value="Excavations/trenching">
+        		<option value="Fire Equipment">
+        		<option value="Gas Cylinders">
+        		<option value="Hand Tools">
+        		<option value="Hazardous Waste">
+        		<option value="Housekeeping">
+        		<option value="HSE Sign">
+        		<option value="Impalement Hazard">
+        		<option value="Inspection & Color Code">
+        		<option value="Lifting rigging">
+        		<option value="Manual Handling">
+        		<option value="Material Management">
+        		<option value="MEWP">
+        		<option value="Noise">
+        		<option value="Permit to Work">
+        		<option value="Position of People">
+        		<option value="PPE">
+        		<option value="Slip/trips">
+        		<option value="Smoking policy">
+        		<option value="TBT">
+        		<option value="Tools & Equipment">
+        		<option value="Traffic Violation">
+        		<option value="Vehicles/Equip. Operations">
+        		<option value="Welfare facilities">
+        		<option value="Work at Height / Scaffoldings">
             </datalist>
         </div>
     </div>
@@ -173,7 +191,6 @@
             const fields = [
                 { id: 'date', label: 'Date' },
                 { id: 'company', label: 'Company' },
-                { id: 'funcArea', label: 'Functional Area' },
                 { id: 'badge', label: 'Badge Number' },
                 { id: 'name', label: 'Name' },
                 { id: 'area', label: 'Area' },
