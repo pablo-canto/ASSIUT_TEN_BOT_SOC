@@ -9,13 +9,13 @@
         .field { margin-bottom: 12px; }
         .row { display: flex; gap: 10px; margin-bottom: 12px; }
         .row .field { flex: 1; margin-bottom: 0; }
-        /* Ajuste de proporciones para Badge vs Name */
         .flex-small { flex: 0.5 !important; }
         .flex-large { flex: 1.5 !important; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
         select, input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: white; color: black; }
         .error { border: 2px solid #ff4d4d !important; }
         button { width: 100%; padding: 15px; background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .conditional-section { border: 1px dashed #ccc; padding: 10px; border-radius: 8px; margin-top: 10px; background-color: rgba(255, 255, 255, 0.05); display: none; }
     </style>
 </head>
 <body>
@@ -52,7 +52,7 @@
         <label>Area (Searchable):</label>
         <input list="areaOptions" id="area" placeholder="Type to search area...">
         <datalist id="areaOptions">
-            <option value="ADMIN BUILDING">
+              <option value="ADMIN BUILDING">
             <option value="1GXX - AREA G - UTILITY AREA">
             <option value="ENPPI LAYDOWN 1">
             <option value="ENPPI LAYDOWN A3 - WAREHOUSE">
@@ -104,8 +104,7 @@
             <option value="">Select Observed Company...</option>
             <option value="TEN">TECHNIP ENERGIES</option>
             <option value="PTJ">PETROJET</option>
-            <option value="ENPPI">ENPPI</option>
-            <option value="OTHER">OTHER</option>
+            <option value="ENPPI">ENPPI</option>      
         </select>
     </div>
 
@@ -170,25 +169,80 @@
         <textarea id="observation" rows="3" placeholder="Describe what you observed..."></textarea>
     </div>
 
+    <div id="unsafeSection" class="conditional-section">
+        <div class="field">
+            <label>Hazard Categorization:</label>
+            <select id="hazardCat">
+                <option value="">Select Risk...</option>
+                <option value="Low Risk">Low Risk</option>
+                <option value="Medium Risk">Medium Risk</option>
+                <option value="Life threatening Risk">Life threatening Risk</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Corrective Action:</label>
+            <textarea id="correctiveAction" rows="2" placeholder="Describe action taken..."></textarea>
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label>Status:</label>
+                <select id="status">
+                    <option value="">Select Status...</option>
+                    <option value="Situation Fixed">Situation Fixed</option>
+                    <option value="Need further action">Need further action</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Responsible Badge:</label>
+                <input type="text" id="respBadge" placeholder="ID" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Responsible Name:</label>
+            <input type="text" id="respName" placeholder="Full Name" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
+        </div>
+    </div>
+
     <button id="mainButton" onclick="sendData()">Save Observation</button>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        const obsType = document.getElementById('obsType');
+        const unsafeSection = document.getElementById('unsafeSection');
+        const conditionalFields = ['hazardCat', 'correctiveAction', 'status', 'respBadge', 'respName'];
+
+        // Logic for showing/hiding additional fields
+        obsType.addEventListener('change', function() {
+            const isUnsafe = (this.value !== 'Safe' && this.value !== '');
+            unsafeSection.style.display = isUnsafe ? 'block' : 'none';
+            
+            if (!isUnsafe) {
+                conditionalFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    el.value = '';
+                    el.classList.remove('error');
+                });
+            }
+        });
+
+        // Configuración de fechas
         const dateInput = document.getElementById('date');
         const now = new Date();
         const today = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-        
         const minDateObj = new Date();
         minDateObj.setDate(minDateObj.getDate() - 15);
         const minDate = new Date(minDateObj.getTime() - (minDateObj.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-
         dateInput.setAttribute('max', today);
         dateInput.setAttribute('min', minDate);
 
         function sendData() {
-            const fields = [
+            // Lista base de campos obligatorios
+            let fieldsToCheck = [
                 { id: 'date', label: 'Date' },
                 { id: 'company', label: 'Company' },
                 { id: 'badge', label: 'Badge Number' },
@@ -200,30 +254,30 @@
                 { id: 'observation', label: 'Observation' }
             ];
 
-            let errors = [];
-            let values = [];
+            // Agregar campos adicionales si la sección está visible
+            if (unsafeSection.style.display === 'block') {
+                fieldsToCheck.push(
+                    { id: 'hazardCat', label: 'Hazard Categorization' },
+                    { id: 'correctiveAction', label: 'Corrective Action' },
+                    { id: 'status', label: 'Status' },
+                    { id: 'respBadge', label: 'Responsible Badge' },
+                    { id: 'respName', label: 'Responsible Name' }
+                );
+            }
 
-            fields.forEach(field => {
+            let errors = [];
+            let resultValues = {};
+
+            fieldsToCheck.forEach(field => {
                 const element = document.getElementById(field.id);
                 const val = element.value.trim();
 
                 if (!val) {
                     element.classList.add('error');
                     errors.push(`- ${field.label} is required.`);
-                } else if (field.id === 'date') {
-                    if (val > today) {
-                        element.classList.add('error');
-                        errors.push("- Date cannot be in the future.");
-                    } else if (val < minDate) {
-                        element.classList.add('error');
-                        errors.push("- Date cannot be older than 15 days.");
-                    } else {
-                        element.classList.remove('error');
-                        values.push(val);
-                    }
                 } else {
                     element.classList.remove('error');
-                    values.push(val);
+                    resultValues[field.id] = val;
                 }
             });
 
@@ -232,7 +286,9 @@
                 return;
             }
 
-            tg.sendData(values.join(","));
+            // Enviar todos los valores como una cadena separada por comas
+            const output = Object.values(resultValues).join(",");
+            tg.sendData(output);
         }
     </script>
 </body>
